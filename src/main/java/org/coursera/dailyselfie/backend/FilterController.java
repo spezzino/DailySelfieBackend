@@ -28,14 +28,15 @@ public class FilterController {
 	public @ResponseBody void filter(@RequestParam("image") MultipartFile file, @RequestParam("effect") String effect,
 			HttpServletResponse response) {
 		
+		System.out.println("/applyFilter called with effect = "+effect+"\nImage size = "+file.getSize()+" bytes.");
+		
 		Future<ByteArrayOutputStream> task;
 		try {
 			task = filterService.applyFilter(file, effect);
 			ByteArrayOutputStream outputStream = task.get();
 			if(outputStream != null){
 				response.setStatus(HttpStatus.OK.value());
-//				String base64 = Base64.encodeBase64String(outputStream.toByteArray());
-//				return base64;
+				System.out.println("Sending response back to client");
 				response.setContentType("image/jpeg");
 				response.getOutputStream().write(outputStream.toByteArray());
 				response.getOutputStream().flush();
